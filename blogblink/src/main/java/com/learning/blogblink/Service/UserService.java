@@ -13,6 +13,6 @@ public interface UserService {
 
     User createUser(User user);
     User updateUser(User user);
-    User removeUser(User user);
+    User removeUser(Long userId);
     List<User> getAllUsers();
 }

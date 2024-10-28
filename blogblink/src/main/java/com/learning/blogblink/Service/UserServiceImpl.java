@@ -2,10 +2,12 @@ package com.learning.blogblink.Service;
 
 import com.learning.blogblink.Domain.Entity.User;
 import com.learning.blogblink.Repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -35,8 +37,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User removeUser(User user) {
-        Optional<User> userOptional = userRepository.findById(user.getId());
+    public User removeUser(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User existingUser = userOptional.orElseThrow();
             userRepository.delete(existingUser);
