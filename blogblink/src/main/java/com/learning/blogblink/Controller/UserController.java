@@ -1,33 +1,43 @@
 package com.learning.blogblink.Controller;
 
+import com.learning.blogblink.Domain.Entity.DTO.UserAddRequestDTO;
+import com.learning.blogblink.Domain.Entity.DTO.UserResponseDTO;
+import com.learning.blogblink.Domain.Entity.DTO.UserUpdateRequestDTO;
 import com.learning.blogblink.Domain.Entity.User;
+import com.learning.blogblink.Mapper.UserMapper;
 import com.learning.blogblink.Service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+
 
 @RestController
 @RequestMapping(path = {"/", "/user"})
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addUSer(@RequestBody User user) {
-        User newUser = userService.createUser(user);
+    public ResponseEntity<User> addUSer(@RequestBody UserAddRequestDTO userAddRequestDTO) {
+        User userEntity = userMapper.userAddRequestDTOToUsuario(userAddRequestDTO);
+        User newUser = userService.createUser(userEntity);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-        //return ResponseEntity.ok(newUser);
+
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        User updateUser = userService.updateUser(user);
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO) {
+        User userEntity = userMapper.userUpdateRequestDTOToUser(userUpdateRequestDTO);
+        User updateUser = userService.updateUser(userId, userEntity);
         if(updateUser != null) {
             return new ResponseEntity<>(updateUser, HttpStatus.OK);
         } else {
@@ -46,8 +56,9 @@ public class UserController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        List<UserResponseDTO> userDTOList = userMapper.usersToUserResponseDTO(users);
+        return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
 }

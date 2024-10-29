@@ -22,8 +22,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        Optional<User> userOptional = userRepository.findById(user.getId());
+    public User updateUser(Long userId, User user) {
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User existingUser = userOptional.orElseThrow();
             existingUser.setFirstName(user.getFirstName());
